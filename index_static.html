@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <!-- for optimal display on high DPI devices -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>全景照片预览 | 加载中...</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core/index.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/compass-plugin@5/index.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/settings-plugin@5/index.css" />
+  <style>
+    html,
+    body,
+    #viewer {
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      font-family: sans-serif;
+      /* overflow: hidden; */
+    }
+    .psv-navbar {
+      width: 88%;
+      left: 6%;
+      height: 50px;
+      bottom: -50px;
+      align-items: center;
+      background: transparent;
+    }
+    .psv-navbar--open {
+      /* bottom: calc(0px + constant(safe-area-inset-bottom)); */
+      /* bottom: calc(0px + env(safe-area-inset-bottom)); */
+      bottom: 0;
+    }
+    .psv-caption {
+      text-align: left;
+    }
+  </style>
+</head>
+
+<div id="viewer" style="width: 100vw; height: 100vh;"></div>
+
+<script type="importmap" >
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three/build/three.module.js",
+      "@photo-sphere-viewer/core": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core@5/index.module.js",
+      "@photo-sphere-viewer/compass-plugin": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/compass-plugin@5/index.module.js",
+      "@photo-sphere-viewer/gyroscope-plugin": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/gyroscope-plugin@5/index.module.js",
+      "@photo-sphere-viewer/settings-plugin": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/settings-plugin@5/index.module.js",
+      "@photo-sphere-viewer/resolution-plugin": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/resolution-plugin@5/index.module.js"
+    }
+  }
+</script>
+
+<script type="module">
+  import { Viewer, utils } from '@photo-sphere-viewer/core';
+  // import { AutorotatePlugin } from '@photo-sphere-viewer/autorotate-plugin'; // 需要import插件先.
+  import { CompassPlugin } from '@photo-sphere-viewer/compass-plugin';
+  import { GyroscopePlugin } from '@photo-sphere-viewer/gyroscope-plugin';
+  import { SettingsPlugin } from '@photo-sphere-viewer/settings-plugin';
+  import { ResolutionPlugin } from '@photo-sphere-viewer/resolution-plugin';
+
+  // 配置信息: name 尽量不要超过10个字符
+  const PANO_CONF = {
+    '1': {
+      name: '苏州-同程旅行大厦',
+      dir: 'DJI_0022.JPG',
+      dirSmall: "DJI_0022_SMALL.JPG"
+    },
+    '2': {
+      name: '苏州-石湖景区',
+      dir: 'DJI_0028.JPG',
+      dirSmall: "DJI_0028_SMALL.JPG"
+    },
+    '3': {
+      name: '苏州-淞泽家园',
+      dir: 'DJI_0040.JPG',
+      dirSmall: "DJI_0040_SMALL.JPG"
+    }
+  }
+
+  const urlSearchParams = new URLSearchParams(location.search);
+
+  const pageId = urlSearchParams.get('id');
+
+  const CURRENT_PANO_CONF = PANO_CONF[pageId];
+
+  // 更改id=不符合规定范围内的id 重定向到某个id
+  function replaceQueryParamAndReload(param, newValue) {
+    // 创建当前URL的URL对象
+    const currentUrl = new URL(window.location);
+
+    // 使用URLSearchParams来解析和修改查询字符串
+    currentUrl.searchParams.set(param, newValue);
+
+    // 设置修改后的URL，触发页面重载
+    // window.location.href = currentUrl.toString();
+    window.location.replace(currentUrl.toString())
+  }
+
+  if (!CURRENT_PANO_CONF) {
+    replaceQueryParamAndReload('id', 1); // 不存在的id，前往第一个作为兜底。
+  }
+
+  document.title = `全景照片预览 | ${CURRENT_PANO_CONF.name}`;
+
+  const baseUrl = './src/img/';
+
+  const animatedValues = {
+    pitch: { start: -Math.PI / 2, end: 0 },
+    yaw: { start: Math.PI / 2, end: 0 },
+    zoom: { start: 0, end: 50 },
+    maxFov: { start: 130, end: 90 },
+    fisheye: { start: 2, end: 0 },
+  };
+
+  const viewer = new Viewer({
+    container: 'viewer',
+    // panorama: baseUrl + CURRENT_PANO_CONF.dir,
+    // caption: CURRENT_PANO_CONF.name + '<b style="font-size: 10px;">power by @rexhang.airport</b>',
+    caption: '<b style="font-size: 10px;">author@rexhang.airport</b>',
+    loadingImg: baseUrl + 'rexhang-icon.png',
+    defaultPitch: animatedValues.pitch.start,
+    defaultYaw: animatedValues.yaw.start,
+    defaultZoomLvl: animatedValues.zoom.start,
+    maxFov: animatedValues.maxFov.start,
+    fisheye: animatedValues.fisheye.start,
+    mousemove: false,
+    mousewheel: false,
+    lang: {
+      resolution: '清晰度',
+    },
+    navbar: [
+      // 'autorotate',
+      // 'zoom',
+      // {
+      //   title: 'Rerun animation',
+      //   content: '🔄',
+      //   onClick: reset,
+      // },
+
+      // 标题
+      'caption',
+      // 陀螺仪
+      'gyroscope',
+      // 设置
+      'settings',
+      // 全屏
+      'fullscreen',
+    ],
+    plugins: [
+      // 设置插件
+      SettingsPlugin,
+      // 解析度预加载插件
+      [ResolutionPlugin, {
+        defaultResolution: '普清',
+        resolutions: [
+          {
+              id: '普清',
+              label: '普清',
+              panorama: baseUrl + CURRENT_PANO_CONF.dirSmall,
+          },
+          {
+              id: '高清',
+              label: '高清',
+              panorama: baseUrl + CURRENT_PANO_CONF.dir,
+          },
+        ],
+      }],
+      // 陀螺仪插件
+      [GyroscopePlugin, {
+        absolutePosition: false,
+        roll: true,
+        moveMode: 'fast', // 'smooth'
+        touchmove: true,
+      }],
+      // 自动旋转插件
+      /* [AutorotatePlugin, {
+        autostartDelay: null,
+        autostartOnIdle: false,
+        autorotatePitch: 0,
+      }], */
+      // 指南针插件
+      [CompassPlugin, {
+        size: '60px',
+        // coneColor: 'rgba(255, 255, 255, 0.5)', // 非触摸时候的扇区颜色
+        // hotspotColor: 'rgba(255, 255, 255, 0.5)', 方位点的颜色
+        // navigationColor: 'rgba(255, 0, 0, 0.2)', // 触摸时候的扇区颜色
+        hotspots: [
+            { yaw: '0deg' },
+            { yaw: '90deg' },
+            { yaw: '180deg' },
+            { yaw: '270deg' },
+        ],
+      }],
+    ],
+  });
+
+  // const autorotate = viewer.getPlugin(AutorotatePlugin);
+
+  let isInit = true;
+
+  const delayStart = 300; // 延迟时间ms
+
+  // setup timer for automatic animation on startup
+  viewer.addEventListener('ready', () => {
+    viewer.navbar.hide();
+    if (delayStart) {
+      setTimeout(() => {
+        if (isInit) {
+          intro(animatedValues.pitch.end, animatedValues.pitch.end);
+        }
+      }, delayStart);
+    } else {
+      if (isInit) {
+        intro(animatedValues.pitch.end, animatedValues.pitch.end);
+      }
+    }
+  }, { once: true });
+
+  // launch animation to clicked point
+  viewer.addEventListener('click', ({ data }) => {
+    if (isInit) {
+      intro(data.pitch, data.yaw);
+    }
+  });
+
+  // perform the intro animation
+  function intro(pitch, yaw) {
+    isInit = false;
+    // autorotate.stop();
+    viewer.navbar.hide();
+
+    new utils.Animation({
+      properties: {
+        ...animatedValues,
+        pitch: { start: animatedValues.pitch.start, end: pitch },
+        yaw: { start: animatedValues.yaw.start, end: yaw },
+      },
+      duration: 2500,
+      easing: 'inOutQuad',
+      onTick: (properties) => {
+        viewer.setOptions({
+          fisheye: properties.fisheye,
+          maxFov: properties.maxFov,
+        });
+        viewer.rotate({ yaw: properties.yaw, pitch: properties.pitch });
+        viewer.zoom(properties.zoom);
+      },
+    }).then(() => {
+      // autorotate.start();
+      viewer.navbar.show();
+      viewer.setOptions({
+        mousemove: true,
+        mousewheel: true,
+      });
+    });
+  }
+
+  // perform the reverse animation
+  function reset() {
+    isInit = true;
+    // autorotate.stop();
+    viewer.navbar.hide();
+    viewer.setOptions({
+      mousemove: false,
+      mousewheel: false,
+    });
+
+    new utils.Animation({
+      properties: {
+        pitch: { start: viewer.getPosition().pitch, end: animatedValues.pitch.start },
+        yaw: { start: viewer.getPosition().yaw, end: animatedValues.yaw.start },
+        zoom: { start: viewer.getZoomLevel(), end: animatedValues.zoom.start },
+        maxFov: { start: animatedValues.maxFov.end, end: animatedValues.maxFov.start },
+        fisheye: { start: animatedValues.fisheye.end, end: animatedValues.fisheye.start },
+      },
+      duration: 1500,
+      easing: 'inOutQuad',
+      onTick: (properties) => {
+        viewer.setOptions({
+          fisheye: properties.fisheye,
+          maxFov: properties.maxFov,
+        });
+        viewer.rotate({ yaw: properties.yaw, pitch: properties.pitch });
+        viewer.zoom(properties.zoom);
+      },
+    });
+  }
+
+  window.viewer = viewer;
+
+</script>
+
+<body>
+
+</body>
+
+</html>

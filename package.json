@@ -1,0 +1,31 @@
+{
+  "name": "pano720",
+  "version": "1.0.0",
+  "description": "pano viewer",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --mode production",
+    "dev": "webpack --mode development",
+    "start": "webpack serve --mode development --open"
+  },
+  "keywords": [],
+  "author": "rexhang",
+  "license": "ISC",
+  "devDependencies": {
+    "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^12.0.2",
+    "css-loader": "^6.10.0",
+    "html-webpack-plugin": "^5.6.0",
+    "style-loader": "^3.3.4",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.4"
+  },
+  "dependencies": {
+    "@photo-sphere-viewer/compass-plugin": "^5.7.2",
+    "@photo-sphere-viewer/core": "^5.7.2",
+    "@photo-sphere-viewer/gyroscope-plugin": "^5.7.2",
+    "@photo-sphere-viewer/resolution-plugin": "^5.7.2",
+    "@photo-sphere-viewer/settings-plugin": "^5.7.2"
+  }
+}

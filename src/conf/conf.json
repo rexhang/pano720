@@ -1,0 +1,20 @@
+{
+  "source": {
+    "1": {
+      "name": "苏州-同程旅行大厦",
+      "dir": "DJI_0022.JPG",
+      "dirSmall": "DJI_0022_SMALL.JPG"
+    },
+    "2": {
+      "name": "苏州-石湖景区",
+      "dir": "DJI_0028.JPG",
+      "dirSmall": "DJI_0028_SMALL.JPG"
+    },
+    "3": {
+      "name": "苏州-淞泽家园",
+      "dir": "DJI_0040.JPG",
+      "dirSmall": "DJI_0040_SMALL.JPG"
+    }
+  },
+  "defaultResolution": "SD"
+}
