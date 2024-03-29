@@ -268,4 +268,24 @@ async function launchPage() {
   }
 }
 
-launchPage();
+let pageLaunched = false; // 页面初始化状态标记 为了避免事件交集，所以在确保执行事件之前立刻更改状态
+const debugDom = document.getElementById(window.debugMode.id);
+// 当debug模式下 脚本未执行成功|失败的时候 需要进行脚本的监听
+if (window.debugMode.status && ![true, false].includes(window.debugMode.loaded)) {
+  // 由于load、error事件 并非互斥 所以需要随时监听状态 确保只初始化一次
+  debugDom.addEventListener('load', () => {
+    if (!pageLaunched) { pageLaunched = true; launchPage(); }
+  }, false);
+  debugDom.addEventListener('error', () => {
+    if (!pageLaunched) { pageLaunched = true; launchPage(); }
+  }, false);
+  // 但是也有可能load、error事件一个都不触发，也需要兜底一下，顶多不加载debug脚本，但是不影响主要脚本内容的执行 超时时间为 1000ms
+  setTimeout(() => {
+    // 1s了还是没有执行 主要内容脚本的话 直接执行
+    if (!pageLaunched) { pageLaunched = true; launchPage(); }
+  }, 1000);
+} else {
+  pageLaunched = true;
+  launchPage();
+}
+

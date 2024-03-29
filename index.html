@@ -7,16 +7,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>全景照片预览 | 加载中...</title>
 
-  <!-- 前置脚本，需要再主脚本加载之前执行 -->
+  <!-- 前置脚本，需要在主脚本加载之前执行 -->
   <script>
-    // url 包含 eruda=true 或者 本地存储 包含active-eruda = 'true' 时，debug 脚本会被加载
-    if (/eruda=true/.test(window.location) || localStorage.getItem('eruda-active') === 'true') {
-      // eg: `${url}?|&${'eruda=true'}` || localStorage.setItem('eruda-active', 'true')
+    // url 包含 debug=true 或者 本地存储 包含debug = 'true' 时，debug 脚本会被加载
+    window.debugMode = {
+      id: 'debug-tools',
+      status: /debug-tool=true/.test(window.location) || localStorage.getItem('debug-tool') === 'true',
+      loaded: undefined
+    };
+    if (window.debugMode.status) {
+      // eg: `${url}?|&${'debug=true'}` || localStorage.setItem('debug', 'true')
       const erudaCDNScript = document.createElement('script');
+      erudaCDNScript.id = window.debugMode.id;
       erudaCDNScript.src = '//cdn.jsdelivr.net/npm/eruda';
       document.head.appendChild(erudaCDNScript);
       erudaCDNScript.onload = () => {
         eruda.init();
+        window.debugMode.loaded = true;
         console.info(`★★★★★ eruda debug插件 已被初始化...`);
         // 待加载的插件列表 更多可参阅 https://github.com/liriliri/eruda
         const erudaPlugins = [
@@ -36,6 +43,9 @@
             console.info(`★★★★★ eruda: ${pluginConf.name} 功能插件 已被添加...`);
           }
         });
+      }
+      erudaCDNScript.onerror = () => {
+        window.debugMode.loaded = false;
       }
     }
   </script>
