@@ -1,4 +1,13 @@
-// 直接读取配置文件
+/**
+  * pano720 main script
+  * @description: 主入口脚本
+  * @author: rexhang
+  * @email: rexhang@outlook.com
+  * @date: 2024-03-20 11:11:11
+  * @version: v0.0.1
+**/
+
+// 可直接读取配置文件，也可fetch请求json文件，方便动态配置内容
 // import conf from './conf/conf.json';
 
 // 组件文件
@@ -25,8 +34,7 @@ function replaceQueryParamAndReload(param, newValue) {
   // window.location.href = currentUrl.toString();
   window.location.replace(currentUrl.toString());
 }
-
-replaceQueryParamAndReload.defaultID = '1';
+replaceQueryParamAndReload.defaultID = '1'; // 挂载一个默认定向ID值
 
 async function launchPage() {
   try {

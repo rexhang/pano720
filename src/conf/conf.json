@@ -14,7 +14,12 @@
       "name": "苏州-淞泽家园",
       "dir": "DJI_0040.JPG",
       "dirSmall": "DJI_0040_SMALL.JPG"
+    },
+    "4": {
+      "name": "苏州-苏州湾体育公园",
+      "dir": "DJI_0050.JPG",
+      "dirSmall": "DJI_0050_SMALL.JPG"
     }
   },
-  "defaultResolution": "SD"
+  "defaultResolution": "HD"
 }
