@@ -1,6 +1,7 @@
 /**
   * pano720 main script
   * @description: 主入口脚本
+  * @document: 可参考 https://photo-sphere-viewer.js.org/guide/
   * @author: rexhang
   * @email: rexhang@outlook.com
   * @date: 2024-03-20 11:11:11
